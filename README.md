@@ -10,11 +10,16 @@ Generic, scriptable maintenance commands for an Obsidian vault.
 
 ## Install
 
+Local dev:
+
 ```bash
-npm i -g vault-cli
+npm i
+npm run build
+npm link
+vault --help
 ```
 
-(or run locally: `npm i && npm run build && node dist/cli.js --help`)
+Publishing to npm is intentionally blocked for now (`"private": true` in `package.json`).
 
 ## Config
 
@@ -69,17 +74,30 @@ vault linkify 00-inbox/captures/2026-01-02-something.md
 vault linkify 00-inbox/captures/2026-01-02-something.md --write
 ```
 
-### `vault promote-stubs`
+### `vault linkify-all`
 
-Helps keep a stub folder lightweight.
-
-- Finds stubs referenced by many notes
-- Suggests promotion targets (people/concepts/tools) based on heuristics
-- Does not move files unless `--write`
+Linkify many markdown files matching a glob.
 
 ```bash
-vault promote-stubs
-vault promote-stubs --write
+vault linkify-all --root /path/to/vault --glob '00-inbox/**/*.md'
+vault linkify-all --root /path/to/vault --glob '00-inbox/**/*.md' --limit 50 --write
+```
+
+### `vault promote-stubs`
+
+Generate a stub promotion plan (JSON) you can review/edit.
+
+```bash
+vault promote-stubs --root /path/to/vault --min-refs 10 --out vault.promote-stubs.plan.json
+```
+
+### `vault promote-stubs-apply`
+
+Apply a promotion plan.
+
+```bash
+vault promote-stubs-apply --root /path/to/vault --plan vault.promote-stubs.plan.json
+vault promote-stubs-apply --root /path/to/vault --plan vault.promote-stubs.plan.json --write
 ```
 
 ## Design assumptions
