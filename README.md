@@ -179,6 +179,21 @@ vault promote-stubs-apply --root /path/to/vault --plan vault.promote-stubs.plan.
 vault promote-stubs-apply --root /path/to/vault --plan vault.promote-stubs.plan.json --write
 ```
 
+### `vault rename`
+
+Purpose: rename a note and update all wikilinks across the vault.
+
+Safety:
+- Dry-run by default
+- `--write` renames the file and updates links
+
+Examples:
+
+```bash
+vault rename --root /path/to/vault --from old-note --to new-note.md
+vault rename --root /path/to/vault --from 03-people/alice.md --to 03-people/alice-example.md --write
+```
+
 ## Design assumptions
 
 - Notes are `.md`

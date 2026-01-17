@@ -7,6 +7,7 @@ import { linkifyFile } from './linkify.js';
 import { linkifyAll } from './linkifyAll.js';
 import { lintVault } from './lint.js';
 import { promoteStubs, promoteStubsApply } from './promoteStubs.js';
+import { renameNote } from './rename.js';
 
 const program = new Command();
 
@@ -80,6 +81,18 @@ program
   .action(async (opts) => {
     const root = path.resolve(program.opts().root as string);
     const code = await promoteStubsApply({ root, planFile: String(opts.plan), write: Boolean(opts.write) });
+    process.exitCode = code;
+  });
+
+program
+  .command('rename')
+  .description('Rename a note and update all wikilinks')
+  .requiredOption('--from <fileOrBasename>', 'Source note path (relative to --root) or basename')
+  .requiredOption('--to <path>', 'Destination path (relative to --root, must end with .md)')
+  .option('--write', 'Actually rename and update files', false)
+  .action(async (opts) => {
+    const root = path.resolve(program.opts().root as string);
+    const code = await renameNote({ root, from: String(opts.from), to: String(opts.to), write: Boolean(opts.write) });
     process.exitCode = code;
   });
 

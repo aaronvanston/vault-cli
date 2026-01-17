@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
-import { writePromotePlan, applyPromotePlan } from "../dist/promotePlan.js";
+import { writePromotePlan, applyPromotePlan } from "../src/promotePlan.ts";
 import { makeTempVaultFromFixture } from "./helpers.js";
 
 test("promote plan writes JSON", async () => {

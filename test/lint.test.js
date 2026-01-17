@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { lintVault } from "../dist/lint.js";
+import { lintVault } from "../src/lint.ts";
 import { makeTempVaultFromFixture } from "./helpers.js";
 
 test("lintVault detects broken links", async () => {

@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
-import { linkifyFile } from "../dist/linkify.js";
+import { linkifyFile } from "../src/linkify.ts";
 import { makeTempVaultFromFixture } from "./helpers.js";
 
 test("linkifyFile dry-run does not write", async () => {
