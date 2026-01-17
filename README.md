@@ -10,7 +10,7 @@ Generic, scriptable maintenance commands for an Obsidian vault.
 - densely linked
 - low-noise (fewer broken links / weird formatting)
 
-It’s designed to be generic. There are **no personal names, private structures, or network calls** baked into the tool.
+It’s designed to be generic and safe-by-default.
 
 ## Key concepts
 
@@ -49,7 +49,7 @@ When people/concepts are consistently linked:
 
 ## Goals
 
-- Generic: no personal data baked in
+- Generic: works across many vault structures
 - Safe-by-default: dry runs, explicit writes
 - Configurable: vault structure assumptions live in config
 
