@@ -2,6 +2,51 @@
 
 Generic, scriptable maintenance commands for an Obsidian vault.
 
+## What this is
+
+`vault-cli` is a small command-line toolkit for keeping an Obsidian vault:
+
+- easy to navigate
+- densely linked
+- low-noise (fewer broken links / weird formatting)
+
+It’s designed to be generic. There are **no personal names, private structures, or network calls** baked into the tool.
+
+## Key concepts
+
+### Wikilinks
+
+Obsidian uses wikilinks like:
+
+- `[[note]]`
+- `[[note|label]]`
+- `[[note#heading]]`
+- `[[note^block]]`
+
+This CLI understands these formats when linting.
+
+### Stubs
+
+A **stub** is a real markdown file that exists mainly to keep a link from being “broken”.
+
+Example: you type `[[vertical-saas]]` while capturing a tweet. If there’s no `vertical-saas.md` note yet, Obsidian shows it as an unresolved link.
+
+Stubs are useful because they:
+
+- let you stay in flow while capturing (link now, structure later)
+- keep the graph cleaner (links resolve)
+- make it obvious what to “promote” later (turn a stub into a real person/concept/tool note)
+
+`vault-cli` supports a **plan/apply** workflow to promote stubs safely.
+
+### Why linkification matters
+
+When people/concepts are consistently linked:
+
+- backlinks work (great for 1:1 prep and research)
+- the graph becomes useful instead of a hairball
+- you can jump from meeting → person → related concepts in 1–2 clicks
+
 ## Goals
 
 - Generic: no personal data baked in
@@ -28,7 +73,7 @@ bun install
 bun run build
 
 # Option A: run directly
-bun run dist/cli.js --help
+node dist/cli.js --help
 
 # Option B: install the `vault` command on PATH
 npm link
@@ -62,35 +107,49 @@ You can add `vault.config.json` at the vault root:
 
 ### `vault lint`
 
+Purpose: quickly answer “is my vault healthy?”.
+
 Checks:
 - Broken wikilinks (`[[...]]`) that don’t resolve to any note (ignores code blocks/inline code)
-- Frontmatter basics (presence + required fields by type)
-- Ignores common vault docs by default (`README.md`, `AGENTS.md`, `CLAUDE.md`, `SPEC.md`)
+- Frontmatter presence (skips common vault docs by default: `README.md`, `AGENTS.md`, `CLAUDE.md`, `SPEC.md`)
 
 Examples:
 
 ```bash
-vault lint
-vault lint --json
 vault lint --root /path/to/vault
+vault lint --root /path/to/vault --json
 ```
 
 ### `vault linkify <file>`
 
-Conservatively adds wikilinks for known entities based on existing person/concept notes.
+Purpose: turn plain text mentions into links using existing entity notes.
 
-- Only replaces exact alias/name matches
-- Skips fenced code blocks + existing wikilinks
+How it works:
+- builds a dictionary from existing notes with `type: person` or `type: concept`
+- uses `aliases` from YAML frontmatter for matching
+- skips existing wikilinks and fenced code blocks
+
+Safety:
 - Dry-run by default
+- `--write` to apply
+
+Examples:
 
 ```bash
-vault linkify 00-inbox/captures/2026-01-02-something.md
-vault linkify 00-inbox/captures/2026-01-02-something.md --write
+vault linkify --root /path/to/vault 00-inbox/captures/2026-01-02-something.md
+vault linkify --root /path/to/vault 00-inbox/captures/2026-01-02-something.md --write
 ```
 
 ### `vault linkify-all`
 
-Linkify many markdown files matching a glob.
+Purpose: linkify at scale.
+
+Safety:
+- Dry-run by default
+- Use `--limit` while testing
+- Skips `AGENTS.md`/`CLAUDE.md`/`README.md`/`SPEC.md`
+
+Examples:
 
 ```bash
 vault linkify-all --root /path/to/vault --glob '00-inbox/**/*.md'
@@ -99,7 +158,9 @@ vault linkify-all --root /path/to/vault --glob '00-inbox/**/*.md' --limit 50 --w
 
 ### `vault promote-stubs`
 
-Generate a stub promotion plan (JSON) you can review/edit.
+Purpose: find stubs that are referenced a lot and generate a plan you can review.
+
+This produces a JSON file you should edit (choose where each stub should live).
 
 ```bash
 vault promote-stubs --root /path/to/vault --min-refs 10 --out vault.promote-stubs.plan.json
@@ -107,7 +168,11 @@ vault promote-stubs --root /path/to/vault --min-refs 10 --out vault.promote-stub
 
 ### `vault promote-stubs-apply`
 
-Apply a promotion plan.
+Purpose: apply the plan.
+
+Safety:
+- Default is dry-run (prints what it would move)
+- `--write` actually moves files
 
 ```bash
 vault promote-stubs-apply --root /path/to/vault --plan vault.promote-stubs.plan.json
@@ -119,6 +184,14 @@ vault promote-stubs-apply --root /path/to/vault --plan vault.promote-stubs.plan.
 - Notes are `.md`
 - Wikilinks use Obsidian format `[[target|label]]`
 - `aliases` in YAML frontmatter is supported for entity matching
+
+## Obsidian plugins
+
+No plugins are required.
+
+This tool complements:
+- Obsidian backlinks + graph view (core)
+- Dataview (optional) for dashboards
 
 ## Non-goals
 
