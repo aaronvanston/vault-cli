@@ -1,7 +1,7 @@
-import fg from "fast-glob";
-import path from "node:path";
-import pc from "picocolors";
-import { linkifyFile } from "./linkify.js";
+import path from 'node:path';
+import fg from 'fast-glob';
+import pc from 'picocolors';
+import { linkifyFile } from './linkify.js';
 
 export async function linkifyAll(opts: { root: string; glob: string; write: boolean; limit: number }): Promise<number> {
   const cwd = path.resolve(opts.root);
@@ -9,14 +9,14 @@ export async function linkifyAll(opts: { root: string; glob: string; write: bool
     cwd,
     onlyFiles: true,
     dot: false,
-    ignore: ["**/.obsidian/**", "**/.git/**", "**/node_modules/**"],
+    ignore: ['**/.obsidian/**', '**/.git/**', '**/node_modules/**'],
   });
 
   const files = matches
-    .filter((f) => f.toLowerCase().endsWith(".md"))
+    .filter((f) => f.toLowerCase().endsWith('.md'))
     .filter((f) => {
-      const base = path.basename(f, ".md").toUpperCase();
-      return !["AGENTS", "CLAUDE", "README", "SPEC"].includes(base);
+      const base = path.basename(f, '.md').toUpperCase();
+      return !['AGENTS', 'CLAUDE', 'README', 'SPEC'].includes(base);
     });
   const sliced = opts.limit > 0 ? files.slice(0, opts.limit) : files;
 
@@ -27,14 +27,16 @@ export async function linkifyAll(opts: { root: string; glob: string; write: bool
 
   let failures = 0;
   for (const file of sliced) {
-    const rel = file.replace(/\\/g, "/");
+    const rel = file.replace(/\\/g, '/');
     console.log(pc.dim(`→ ${rel}`));
     const code = await linkifyFile({ root: cwd, file: rel, write: opts.write });
-    if (code !== 0) failures++;
+    if (code !== 0) {
+      failures++;
+    }
   }
 
   if (!opts.write) {
-    console.log(pc.yellow("Dry run complete. Re-run with --write to apply."));
+    console.log(pc.yellow('Dry run complete. Re-run with --write to apply.'));
   }
 
   return failures === 0 ? 0 : 1;

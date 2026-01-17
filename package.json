@@ -3,26 +3,50 @@
   "version": "0.1.0",
   "private": true,
   "description": "Generic CLI utilities for maintaining an Obsidian vault (linting, linkification, stub promotion).",
+  "author": "Aaron Vanston",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aaronvanston/vault-cli.git"
+  },
+  "homepage": "https://github.com/aaronvanston/vault-cli#readme",
+  "bugs": {
+    "url": "https://github.com/aaronvanston/vault-cli/issues"
+  },
   "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "bin": {
-    "vault": "./dist/cli.js"
+    "vault": "dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
   },
   "files": [
-    "dist/",
-    "SKILL.md",
+    "dist",
     "README.md",
     "LICENSE",
+    "SKILL.md",
     "CHANGELOG.md"
   ],
-  "engines": {
-    "node": ">=20"
-  },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "dev": "node --loader ts-node/esm src/cli.ts",
-    "test": "node --test",
-    "prepack": "npm run build"
+    "build": "bun build ./src/cli.ts --outdir ./dist --target node && tsc --emitDeclarationOnly",
+    "dev": "bun run src/cli.ts",
+    "test": "bun test",
+    "lint": "biome check src/",
+    "lint:fix": "biome check --write src/",
+    "format": "biome format --write src/",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "bun run build"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.0",
+    "@types/bun": "latest",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.0"
   },
   "dependencies": {
     "commander": "^12.1.0",
@@ -30,9 +54,18 @@
     "gray-matter": "^4.0.3",
     "picocolors": "^1.1.1"
   },
-  "devDependencies": {
-    "@types/node": "^24.0.0",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.7.3"
-  }
+  "engines": {
+    "node": ">=20",
+    "bun": ">=1.0.0"
+  },
+  "keywords": [
+    "obsidian",
+    "vault",
+    "notes",
+    "markdown",
+    "wikilinks",
+    "productivity",
+    "cli",
+    "bun"
+  ]
 }

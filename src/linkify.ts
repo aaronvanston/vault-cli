@@ -1,17 +1,17 @@
-import fs from "node:fs";
-import path from "node:path";
-import pc from "picocolors";
-import { loadEntities } from "./entities.js";
+import fs from 'node:fs';
+import path from 'node:path';
+import pc from 'picocolors';
+import { loadEntities } from './entities.js';
 
 function escapeRegExp(s: string): string {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 function wordBoundaryRegex(phrase: string): RegExp {
   // Match whole-word-ish, allowing spaces inside phrases.
   // Use negative lookbehind/lookahead to avoid matching in the middle of identifiers.
   const escaped = escapeRegExp(phrase);
-  return new RegExp(`(?<![A-Za-z0-9_])${escaped}(?![A-Za-z0-9_])`, "g");
+  return new RegExp(`(?<![A-Za-z0-9_])${escaped}(?![A-Za-z0-9_])`, 'g');
 }
 
 export async function linkifyFile(opts: { root: string; file: string; write: boolean }): Promise<number> {
@@ -21,16 +21,20 @@ export async function linkifyFile(opts: { root: string; file: string; write: boo
     return 1;
   }
 
-  const raw = fs.readFileSync(abs, "utf8");
+  const raw = fs.readFileSync(abs, 'utf8');
   const entities = await loadEntities({ root: opts.root });
 
   // Build replacements: longest aliases first.
   const replacements: Array<{ from: RegExp; to: (match: string) => string }> = [];
   for (const e of entities) {
     for (const alias of e.aliases) {
-      if (alias.length < 3) continue;
+      if (alias.length < 3) {
+        continue;
+      }
       // Avoid linking very generic words.
-      if (["the", "and", "for", "with", "you", "them", "this"].includes(alias.toLowerCase())) continue;
+      if (['the', 'and', 'for', 'with', 'you', 'them', 'this'].includes(alias.toLowerCase())) {
+        continue;
+      }
 
       replacements.push({
         from: wordBoundaryRegex(alias),
@@ -46,7 +50,9 @@ export async function linkifyFile(opts: { root: string; file: string; write: boo
   let changed = false;
   let count = 0;
   const outParts = parts.map((part) => {
-    if (part.trimStart().startsWith("```")) return part;
+    if (part.trimStart().startsWith('```')) {
+      return part;
+    }
 
     // Avoid changing inside existing wikilinks: protect them.
     const protectedLinks: string[] = [];
@@ -61,7 +67,9 @@ export async function linkifyFile(opts: { root: string; file: string; write: boo
     for (const r of replacements) {
       working = working.replace(r.from, (m) => {
         // Don't linkify already placeholder'd text
-        if (m.includes("__VAULTLINK_")) return m;
+        if (m.includes('__VAULTLINK_')) {
+          return m;
+        }
         count++;
         return r.to(m);
       });
@@ -69,20 +77,22 @@ export async function linkifyFile(opts: { root: string; file: string; write: boo
 
     working = working.replace(/__VAULTLINK_(\d+)__/g, (_, n) => protectedLinks[Number(n)] ?? _);
 
-    if (working !== part) changed = true;
+    if (working !== part) {
+      changed = true;
+    }
     return working;
   });
 
-  const next = outParts.join("");
+  const next = outParts.join('');
 
   if (!changed) {
-    console.log(pc.dim("No changes."));
+    console.log(pc.dim('No changes.'));
     return 0;
   }
 
   if (!opts.write) {
     console.log(pc.yellow(`Dry run: would apply ${count} link insertions.`));
-    console.log(pc.dim("Re-run with --write to apply."));
+    console.log(pc.dim('Re-run with --write to apply.'));
     return 0;
   }
 
