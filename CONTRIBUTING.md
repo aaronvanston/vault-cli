@@ -11,12 +11,14 @@ Thanks for helping improve `vault-cli`.
 ## Development
 
 ```bash
-npm i
-npm run build
-npm test
+bun install
+bun run format
+bun run lint
+bun run typecheck
+bun test
 ```
 
 ## Releasing (later)
 
 This repo is currently marked `private` in `package.json` to prevent accidental publishing.
-When ready, remove `private: true`, bump version, update changelog, and publish.
+When ready, remove `"private": true`, bump version, update changelog, and publish.

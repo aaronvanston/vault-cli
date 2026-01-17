@@ -10,16 +10,25 @@ Generic, scriptable maintenance commands for an Obsidian vault.
 
 ## Install
 
-Local dev:
+### Local dev
 
 ```bash
-npm i
-npm run build
+bun install
+bun run build
 npm link
 vault --help
 ```
 
-Publishing to npm is intentionally blocked for now (`"private": true` in `package.json`).
+### Publishing (when ready)
+
+Publishing is intentionally blocked right now (`"private": true` in `package.json`).
+
+When you’re ready to go public:
+
+- Remove `"private": true`
+- Tag a release (SemVer)
+- `bun run build`
+- `npm publish`
 
 ## Config
 
