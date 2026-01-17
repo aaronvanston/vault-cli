@@ -5,7 +5,7 @@ import path from "node:path";
 import pc from "picocolors";
 import { lintVault } from "./lint.js";
 import { linkifyFile } from "./linkify.js";
-import { promoteStubs } from "./promoteStubs.js";
+import { promoteStubs, promoteStubsApply } from "./promoteStubs.js";
 
 const program = new Command();
 
@@ -39,13 +39,24 @@ program
 
 program
   .command("promote-stubs")
-  .description("Report frequently referenced stubs")
+  .description("Generate a stub promotion plan (JSON)")
   .option("--min-refs <n>", "Minimum references", "5")
-  .option("--write", "(Reserved) move files", false)
+  .option("--out <file>", "Write plan to file", "vault.promote-stubs.plan.json")
   .action(async (opts) => {
     const root = program.opts().root as string;
     const minRefs = Number(opts.minRefs);
-    const code = await promoteStubs({ root, write: Boolean(opts.write), minRefs: Number.isFinite(minRefs) ? minRefs : 5 });
+    const code = await promoteStubs({ root, outFile: String(opts.out), minRefs: Number.isFinite(minRefs) ? minRefs : 5 });
+    process.exitCode = code;
+  });
+
+program
+  .command("promote-stubs-apply")
+  .description("Apply a stub promotion plan")
+  .requiredOption("--plan <file>", "Plan JSON file")
+  .option("--write", "Actually move files", false)
+  .action(async (opts) => {
+    const root = program.opts().root as string;
+    const code = await promoteStubsApply({ root, planFile: String(opts.plan), write: Boolean(opts.write) });
     process.exitCode = code;
   });
 

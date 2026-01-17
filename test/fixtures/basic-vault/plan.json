@@ -1,0 +1,10 @@
+{
+  "vaultRoot": "/Users/aaronvanston/src/vault-cli/test/fixtures/basic-vault",
+  "generatedAt": "2026-01-17T02:41:41.874Z",
+  "moves": [
+    {
+      "from": "stubby",
+      "toRelPath": "02-concepts/stubby.md"
+    }
+  ]
+}

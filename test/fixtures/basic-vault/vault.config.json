@@ -1,0 +1,14 @@
+{
+  "vaultRoot": ".",
+  "folders": {
+    "people": ["03-people"],
+    "concepts": ["02-concepts"],
+    "meetings": ["06-meetings"],
+    "stubs": ["99-stubs"]
+  },
+  "frontmatter": {
+    "peopleType": "person",
+    "conceptType": "concept",
+    "meetingType": "meeting-notes"
+  }
+}
