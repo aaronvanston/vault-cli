@@ -15,20 +15,25 @@ Generic, scriptable maintenance commands for an Obsidian vault.
 ```bash
 bun install
 bun run build
+```
+
+### Install (local clone)
+
+This project is intended to be used via a local clone (no npm publishing).
+
+```bash
+git clone https://github.com/aaronvanston/vault-cli.git
+cd vault-cli
+bun install
+bun run build
+
+# Option A: run directly
+bun run dist/cli.js --help
+
+# Option B: install the `vault` command on PATH
 npm link
 vault --help
 ```
-
-### Publishing (when ready)
-
-Publishing is intentionally blocked right now (`"private": true` in `package.json`).
-
-When you’re ready to go public:
-
-- Remove `"private": true`
-- Tag a release (SemVer)
-- `bun run build`
-- `npm publish`
 
 ## Config
 
