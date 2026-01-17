@@ -3,6 +3,7 @@
 import path from 'node:path';
 import { Command } from 'commander';
 import pc from 'picocolors';
+import { fixVault } from './fix.js';
 import { linkifyFile } from './linkify.js';
 import { linkifyAll } from './linkifyAll.js';
 import { lintVault } from './lint.js';
@@ -93,6 +94,16 @@ program
   .action(async (opts) => {
     const root = path.resolve(program.opts().root as string);
     const code = await renameNote({ root, from: String(opts.from), to: String(opts.to), write: Boolean(opts.write) });
+    process.exitCode = code;
+  });
+
+program
+  .command('fix')
+  .description('Apply safe automatic fixes (dry-run by default)')
+  .option('--write', 'Actually modify files', false)
+  .action(async (opts) => {
+    const root = path.resolve(program.opts().root as string);
+    const code = await fixVault({ root, write: Boolean(opts.write), glob: '**/*.md' });
     process.exitCode = code;
   });
 

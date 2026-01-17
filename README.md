@@ -194,6 +194,25 @@ vault rename --root /path/to/vault --from old-note --to new-note.md
 vault rename --root /path/to/vault --from 03-people/alice.md --to 03-people/alice-example.md --write
 ```
 
+### `vault fix`
+
+Purpose: apply safe, low-risk automatic fixes.
+
+Currently fixes:
+- escaped pipe in wikilinks: `[[foo\\|Bar]]` → `[[foo|Bar]]`
+- trailing slash in wikilinks: `[[nextjs/]]` → `[[nextjs]]`
+
+Safety:
+- Dry-run by default
+- Skips fenced code blocks
+
+Examples:
+
+```bash
+vault fix --root /path/to/vault
+vault fix --root /path/to/vault --write
+```
+
 ## Design assumptions
 
 - Notes are `.md`
