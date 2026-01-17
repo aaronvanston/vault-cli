@@ -44,8 +44,9 @@ You can add `vault.config.json` at the vault root:
 ### `vault lint`
 
 Checks:
-- Broken wikilinks (`[[...]]`) that don’t resolve to any note
+- Broken wikilinks (`[[...]]`) that don’t resolve to any note (ignores code blocks/inline code)
 - Frontmatter basics (presence + required fields by type)
+- Ignores common vault docs by default (`README.md`, `AGENTS.md`, `CLAUDE.md`, `SPEC.md`)
 
 Examples:
 
