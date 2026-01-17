@@ -37,15 +37,24 @@ export function stripCode(text: string): string {
   return withoutFences.replace(/`[^`]*`/g, "");
 }
 
+export function normalizeWikiTarget(target: string): string {
+  // Strip aliases, headings, and block refs.
+  // Obsidian supports: [[note|label]], [[note#heading]], [[note^block]]
+  const withoutAlias = target.split("|")[0]?.trim() ?? "";
+  const withoutHeading = withoutAlias.split("#")[0]?.trim() ?? "";
+  const withoutBlock = withoutHeading.split("^")[0]?.trim() ?? "";
+  return withoutBlock.replace(/\.md$/i, "");
+}
+
 export function parseWikiLinks(text: string): string[] {
   const out: string[] = [];
   const re = /\[\[([^\]]+)\]\]/g;
   let m: RegExpExecArray | null;
   while ((m = re.exec(text))) {
     const raw = m[1] ?? "";
-    const target = raw.split("|")[0]?.trim();
-    if (!target || target.startsWith("#")) continue;
-    out.push(target.replace(/\.md$/i, ""));
+    const normalized = normalizeWikiTarget(raw);
+    if (!normalized || normalized.startsWith("#")) continue;
+    out.push(normalized);
   }
   return out;
 }

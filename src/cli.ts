@@ -5,6 +5,7 @@ import path from "node:path";
 import pc from "picocolors";
 import { lintVault } from "./lint.js";
 import { linkifyFile } from "./linkify.js";
+import { linkifyAll } from "./linkifyAll.js";
 import { promoteStubs, promoteStubsApply } from "./promoteStubs.js";
 
 const program = new Command();
@@ -34,6 +35,24 @@ program
     const rel = path.relative(root, path.resolve(root, file));
     console.log(pc.dim(`Target: ${rel}`));
     const code = await linkifyFile({ root, file, write: Boolean(opts.write) });
+    process.exitCode = code;
+  });
+
+program
+  .command("linkify-all")
+  .description("Linkify many markdown files matching a glob")
+  .requiredOption("--glob <pattern>", "Glob (relative to --root), e.g. '00-inbox/**/*.md'")
+  .option("--limit <n>", "Limit number of files", "0")
+  .option("--write", "Write changes to files", false)
+  .action(async (opts) => {
+    const root = program.opts().root as string;
+    const limit = Number(opts.limit);
+    const code = await linkifyAll({
+      root,
+      glob: String(opts.glob),
+      write: Boolean(opts.write),
+      limit: Number.isFinite(limit) ? limit : 0,
+    });
     process.exitCode = code;
   });
 
