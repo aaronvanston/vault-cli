@@ -1,0 +1,26 @@
+{
+  "name": "vault-cli",
+  "version": "0.1.0",
+  "description": "Generic CLI utilities for maintaining an Obsidian vault (linting, linkification, stub promotion).",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "vault": "./dist/cli.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "node --loader ts-node/esm src/cli.ts",
+    "lint": "node -c dist/cli.js || true"
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "fast-glob": "^3.3.2",
+    "gray-matter": "^4.0.3",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
+  }
+}
